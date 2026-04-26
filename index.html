@@ -550,7 +550,7 @@
       const isActive = i === activeIdx;
       const isNext = i === activeIdx + 1;
 
-      if (isPast && !isActive) div.classList.add('past');
+      if (isPast && !isActive) return;
       if (isActive) div.classList.add('active');
       if (isNext && !isPast) div.classList.add('next-up');
 
