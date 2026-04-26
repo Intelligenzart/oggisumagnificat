@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARS EUROPA TV - Palinsesto</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #09090f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --gold: #b89a3e;
+    --gold-dim: #7a6628;
+    --text: #e2ddd4;
+    --muted: #5a5a6e;
+    --red: #c0392b;
+    --border: #22222e;
+    --upcoming: #1c2a1c;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    min-height: 100vh;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  .clock {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .on-air-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+
+  .on-air-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.15; }
+  }
+
+  main {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    min-height: calc(100vh - 65px);
+  }
+
+  .player-section {
+    padding: 2rem 2rem 2rem 2.5rem;
+    border-right: 1px solid var(--border);
+  }
+
+  .now-playing-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .player-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    border: 1px solid var(--border);
+  }
+
+  #player { width: 100%; height: 100%; }
+
+  .player-meta {
+    margin-top: 1.2rem;
+  }
+
+  .current-title {
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--text);
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+
+  .current-time-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+  }
+
+  .countdown-section {
+    margin-top: 1.5rem;
+    padding: 1rem 1.2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .countdown-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .countdown-next {
+    font-size: 1rem;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .countdown-timer {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .sidebar {
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    padding: 1.4rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sidebar-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  .day-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+
+  .schedule-list {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .schedule-item {
+    display: grid;
+    grid-template-columns: 68px 1fr;
+    padding: 0.9rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s;
+    align-items: start;
+    position: relative;
+  }
+
+  .schedule-item:hover { background: var(--surface2); }
+
+  .schedule-item.active {
+    background: var(--surface2);
+    border-left: 2px solid var(--gold);
+    padding-left: calc(1.5rem - 2px);
+  }
+
+  .schedule-item.past { opacity: 0.32; }
+
+  .schedule-item.next-up {
+    background: #111a11;
+    border-left: 2px solid #2d5a2d;
+    padding-left: calc(1.5rem - 2px);
+  }
+
+  .sched-time {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    padding-top: 2px;
+    line-height: 1.3;
+  }
+
+  .sched-title {
+    font-size: 0.92rem;
+    line-height: 1.35;
+    color: var(--text);
+  }
+
+  .sched-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--muted);
+    margin-top: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  .active-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--red);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .sidebar-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .no-program {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    .player-section { padding: 1.2rem; border-right: none; border-bottom: 1px solid var(--border); }
+    .sidebar { max-height: 55vh; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">ARS EUROPA &mdash; TV</div>
+  <div class="on-air-badge">
+    <div class="on-air-dot"></div>
+    In onda
+  </div>
+  <div class="clock" id="clock">--:--:--</div>
+</header>
+
+<main>
+  <section class="player-section">
+    <div class="now-playing-label">In onda ora</div>
+    <div class="player-wrapper">
+      <div id="player"></div>
+    </div>
+    <div class="player-meta">
+      <div class="current-title" id="currentTitle">Caricamento...</div>
+      <div class="current-time-badge" id="currentTimeBadge"></div>
+    </div>
+    <div class="countdown-section" id="countdownSection" style="display:none;">
+      <div class="countdown-label">A seguire</div>
+      <div class="countdown-next" id="countdownTitle"></div>
+      <div class="countdown-timer" id="countdownTimer"></div>
+    </div>
+  </section>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-label">Palinsesto</div>
+      <div class="day-date" id="dayDate"></div>
+    </div>
+    <div class="schedule-list" id="scheduleList"></div>
+    <div class="sidebar-footer">Clicca su un programma per avviarlo manualmente.</div>
+  </aside>
+</main>
+
+<script>
+  /* ===================================================
+     CONFIGURA QUI IL TUO PALINSESTO FISSO
+     Inserisci i programmi con orario, ID YouTube e titolo.
+     Formato orario: "HH:MM" (24 ore)
+     id: ID del video YouTube (parte dopo ?v= nell'URL)
+     title: titolo da mostrare
+     tag: breve categoria (opzionale)
+
+     Il sistema trova automaticamente il programma
+     attivo in base all'ora corrente.
+     I programmi vanno in ordine cronologico.
+     =================================================== */
+  const schedule = [
+    { time: "08:00", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 1: L'Alfa e l'Omega", tag: "Arte & Simboli" },
+    { time: "08:15", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 2: Il Labirinto", tag: "Arte & Simboli" },
+    { time: "08:30", id: "dQw4w9WgXcQ", title: "AI Semiology - Introduzione ai fondamenti", tag: "Semiotica" },
+    { time: "09:00", id: "dQw4w9WgXcQ", title: "Né Apocalittici né Integrati - Episodio 1", tag: "Serie" },
+    { time: "09:20", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 3: La Croce", tag: "Arte & Simboli" },
+    { time: "09:40", id: "dQw4w9WgXcQ", title: "Eidopoiesi e il linguaggio dell'AI", tag: "Semiotica" },
+    { time: "10:00", id: "dQw4w9WgXcQ", title: "Fashion Semiology - Lezione aperta", tag: "Moda" },
+    { time: "10:25", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 4: L'Angelo", tag: "Arte & Simboli" },
+    { time: "11:00", id: "dQw4w9WgXcQ", title: "Agostino. Della grazia e della volontà", tag: "Documentari" },
+    { time: "11:35", id: "dQw4w9WgXcQ", title: "Net Semiology - Principi fondamentali", tag: "Semiotica" },
+    { time: "12:00", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 5: La Mandorla", tag: "Arte & Simboli" },
+    { time: "14:00", id: "dQw4w9WgXcQ", title: "Simnoesi. Sull'intelligenza condivisa", tag: "Teoria" },
+    { time: "14:25", id: "dQw4w9WgXcQ", title: "Né Apocalittici né Integrati - Episodio 2", tag: "Serie" },
+    { time: "14:50", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 6: Il Mandala", tag: "Arte & Simboli" },
+    { time: "15:10", id: "dQw4w9WgXcQ", title: "Antropotesi e il progetto umano", tag: "Teoria" },
+    { time: "16:00", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 7: La Colomba", tag: "Arte & Simboli" },
+    { time: "20:00", id: "dQw4w9WgXcQ", title: "Agostino. Della grazia e della volontà", tag: "Documentari" },
+    { time: "21:00", id: "dQw4w9WgXcQ", title: "AI Semiology - Lezione aperta", tag: "Semiotica" },
+    { time: "21:30", id: "dQw4w9WgXcQ", title: "Né Apocalittici né Integrati - Episodio 3", tag: "Serie" },
+  ];
+  /* =================================================== */
+
+  function parseTime(t) {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  function getNowMinutes() {
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+  }
+
+  function getCurrentItem() {
+    const nowMin = getNowMinutes();
+    let current = null;
+    let next = null;
+
+    for (let i = 0; i < schedule.length; i++) {
+      const itemMin = parseTime(schedule[i].time);
+      const nextMin = i + 1 < schedule.length ? parseTime(schedule[i + 1].time) : 24 * 60;
+
+      if (nowMin >= itemMin && nowMin < nextMin) {
+        current = { ...schedule[i], index: i };
+        if (i + 1 < schedule.length) {
+          next = { ...schedule[i + 1], index: i + 1, startMin: parseTime(schedule[i + 1].time) };
+        }
+        break;
+      }
+    }
+
+    return { current, next };
+  }
+
+  let player;
+  let loadedIndex = -1;
+
+  window.onYouTubeIframeAPIReady = function () {
+    const { current } = getCurrentItem();
+    if (!current) {
+      document.getElementById('currentTitle').textContent = 'Nessun programma in questo momento.';
+      renderSchedule(-1);
+      return;
+    }
+
+    loadedIndex = current.index;
+    player = new YT.Player('player', {
+      videoId: current.id,
+      playerVars: { autoplay: 1, controls: 1, modestbranding: 1, rel: 0 },
+      events: {
+        onReady: function (e) { e.target.playVideo(); },
+        onStateChange: function (e) {
+          if (e.data === YT.PlayerState.ENDED) {
+            const { current: c } = getCurrentItem();
+            if (c && c.index !== loadedIndex) {
+              loadedIndex = c.index;
+              player.loadVideoById({ videoId: c.id });
+            }
+          }
+        }
+      }
+    });
+
+    updateMeta();
+    renderSchedule(current.index);
+  };
+
+  function updateMeta() {
+    const { current, next } = getCurrentItem();
+    if (!current) return;
+
+    document.getElementById('currentTitle').textContent = current.title;
+    document.getElementById('currentTimeBadge').textContent = current.time + ' — ' + (current.tag || '');
+
+    if (next) {
+      const nowMin = getNowMinutes();
+      const nextMin = next.startMin;
+      const diffMin = nextMin - nowMin;
+      const h = Math.floor(diffMin / 60);
+      const m = diffMin % 60;
+      const countdown = h > 0 ? h + 'h ' + m + 'min' : m + ' min';
+
+      document.getElementById('countdownSection').style.display = 'flex';
+      document.getElementById('countdownTitle').textContent = next.title;
+      document.getElementById('countdownTimer').textContent = 'tra ' + countdown;
+    } else {
+      document.getElementById('countdownSection').style.display = 'none';
+    }
+  }
+
+  function renderSchedule(activeIdx) {
+    const list = document.getElementById('scheduleList');
+    const nowMin = getNowMinutes();
+    list.innerHTML = '';
+
+    schedule.forEach((item, i) => {
+      const div = document.createElement('div');
+      div.className = 'schedule-item';
+
+      const itemMin = parseTime(item.time);
+      const nextMin = i + 1 < schedule.length ? parseTime(schedule[i + 1].time) : 24 * 60;
+      const isPast = nowMin >= nextMin;
+      const isActive = i === activeIdx;
+      const isNext = i === activeIdx + 1;
+
+      if (isPast && !isActive) div.classList.add('past');
+      if (isActive) div.classList.add('active');
+      if (isNext && !isPast) div.classList.add('next-up');
+
+      div.innerHTML = `
+        <div class="sched-time">${item.time}</div>
+        <div>
+          <div class="sched-title">${item.title}</div>
+          ${isActive ? '<div class="active-tag">&#9654; in onda</div>' : ''}
+          ${item.tag && !isActive ? '<div class="sched-tag">' + item.tag + '</div>' : ''}
+        </div>
+      `;
+
+      div.addEventListener('click', () => {
+        loadedIndex = i;
+        player.loadVideoById({ videoId: item.id });
+        document.getElementById('currentTitle').textContent = item.title;
+        document.getElementById('currentTimeBadge').textContent = item.time + ' — ' + (item.tag || '');
+        renderSchedule(i);
+      });
+
+      list.appendChild(div);
+    });
+
+    if (list.querySelector('.active')) {
+      list.querySelector('.active').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
+    document.getElementById('dayDate').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+  setInterval(updateMeta, 30000);
+</script>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>
