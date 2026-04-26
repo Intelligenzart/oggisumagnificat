@@ -404,10 +404,13 @@
         onReady: function (e) { e.target.playVideo(); },
         onStateChange: function (e) {
           if (e.data === YT.PlayerState.ENDED) {
-            const { current: c } = getCurrentItem();
-            if (c && c.index !== loadedIndex) {
-              loadedIndex = c.index;
-              player.loadVideoById({ videoId: c.id });
+            const nextIndex = loadedIndex + 1;
+            if (nextIndex < schedule.length) {
+              loadedIndex = nextIndex;
+              player.loadVideoById({ videoId: schedule[nextIndex].id });
+              document.getElementById('currentTitle').textContent = schedule[nextIndex].title;
+              document.getElementById('currentTimeBadge').textContent = schedule[nextIndex].time + ' — ' + (schedule[nextIndex].tag || '');
+              renderSchedule(nextIndex);
             }
           }
         }
