@@ -385,8 +385,48 @@
     return { current, next };
   }
 
+  /* ===================================================
+     PLAYLIST SPOT ARS EUROPA
+     spotsPerBreak: 1 o 2 spot a caso tra un programma e l'altro
+     =================================================== */
+  const SPOT_PLAYLIST_ID = 'PL9Z4DZPRiAHL3-6zi7ULGE7QumTops_8x';
+  const SPOT_MAX = 2;
+  /* =================================================== */
+
   let player;
   let loadedIndex = -1;
+  let playingSpot = false;
+  let spotsPlayed = 0;
+  let spotsTarget = 1;
+  let nextProgramIndex = -1;
+
+  function showSpotBadge() {
+    document.getElementById('currentTitle').textContent = 'Messaggio ARS EUROPA';
+    document.getElementById('currentTimeBadge').textContent = 'Intermezzo';
+  }
+
+  function loadNextProgram() {
+    playingSpot = false;
+    spotsPlayed = 0;
+    const idx = nextProgramIndex;
+    if (idx >= 0 && idx < schedule.length) {
+      loadedIndex = idx;
+      player.loadVideoById({ videoId: schedule[idx].id });
+      document.getElementById('currentTitle').textContent = schedule[idx].title;
+      document.getElementById('currentTimeBadge').textContent = schedule[idx].time + ' — ' + (schedule[idx].tag || '');
+      renderSchedule(idx);
+    }
+  }
+
+  function startSpotBreak(nextIdx) {
+    playingSpot = true;
+    spotsPlayed = 0;
+    spotsTarget = Math.floor(Math.random() * SPOT_MAX) + 1;
+    nextProgramIndex = nextIdx;
+    showSpotBadge();
+    player.loadPlaylist({ list: SPOT_PLAYLIST_ID, listType: 'playlist' });
+    player.setShuffle(true);
+  }
 
   window.onYouTubeIframeAPIReady = function () {
     const { current } = getCurrentItem();
@@ -404,13 +444,19 @@
         onReady: function (e) { e.target.playVideo(); },
         onStateChange: function (e) {
           if (e.data === YT.PlayerState.ENDED) {
-            const nextIndex = loadedIndex + 1;
-            if (nextIndex < schedule.length) {
-              loadedIndex = nextIndex;
-              player.loadVideoById({ videoId: schedule[nextIndex].id });
-              document.getElementById('currentTitle').textContent = schedule[nextIndex].title;
-              document.getElementById('currentTimeBadge').textContent = schedule[nextIndex].time + ' — ' + (schedule[nextIndex].tag || '');
-              renderSchedule(nextIndex);
+            if (playingSpot) {
+              spotsPlayed++;
+              if (spotsPlayed >= spotsTarget) {
+                loadNextProgram();
+              } else {
+                showSpotBadge();
+                player.nextVideo();
+              }
+            } else {
+              const nextIndex = loadedIndex + 1;
+              if (nextIndex < schedule.length) {
+                startSpotBreak(nextIndex);
+              }
             }
           }
         }
