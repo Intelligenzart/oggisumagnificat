@@ -338,8 +338,8 @@
     { time: "09:00", id: "dQw4w9WgXcQ", title: "Né Apocalittici né Integrati - Episodio 1", tag: "Serie" },
     { time: "09:20", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 3: La Croce", tag: "Arte & Simboli" },
     { time: "09:40", id: "dQw4w9WgXcQ", title: "Eidopoiesi e il linguaggio dell'AI", tag: "Semiotica" },
-    { time: "10:00", id: "3vvVMB14ULo", title: "Canto XXXIV Inferno", tag: "Divina Commedia" },
-    { time: "10:25", id: "eSQcTSW5u50", title: "Alcesti di Euripide", tag: "Tragedia Greca" },
+    { time: "10:00", id: "dQw4w9WgXcQ", title: "Fashion Semiology - Lezione aperta", tag: "Moda" },
+    { time: "10:25", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 4: L'Angelo", tag: "Arte & Simboli" },
     { time: "11:00", id: "dQw4w9WgXcQ", title: "Agostino. Della grazia e della volontà", tag: "Documentari" },
     { time: "11:35", id: "dQw4w9WgXcQ", title: "Net Semiology - Principi fondamentali", tag: "Semiotica" },
     { time: "12:00", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 5: La Mandorla", tag: "Arte & Simboli" },
@@ -386,10 +386,21 @@
   }
 
   /* ===================================================
-     PLAYLIST SPOT ARS EUROPA
-     spotsPerBreak: 1 o 2 spot a caso tra un programma e l'altro
+     SPOT ARS EUROPA
+     Aggiungi o rimuovi ID spot qui sotto.
+     SPOT_MAX: numero massimo di spot consecutivi (1 o 2 a caso)
      =================================================== */
-  const SPOT_PLAYLIST_ID = 'PL9Z4DZPRiAHL3-6zi7ULGE7QumTops_8x';
+  const spots = [
+    'KUznWYscG_g',
+    '1NccUJc33EM',
+    '0SZYi8ntHLA',
+    'OqT8V3CZv-M',
+    'eafWrnFlHbg',
+    'XloE58Wh6D4',
+    'idYFPkKsHGE',
+    '4R0IBJy7VQM',
+    'MvYgvv4t1OM',
+  ];
   const SPOT_MAX = 2;
   /* =================================================== */
 
@@ -399,6 +410,15 @@
   let spotsPlayed = 0;
   let spotsTarget = 1;
   let nextProgramIndex = -1;
+  let usedSpots = [];
+
+  function randomSpotId() {
+    if (usedSpots.length >= spots.length) usedSpots = [];
+    const available = spots.filter(s => !usedSpots.includes(s));
+    const picked = available[Math.floor(Math.random() * available.length)];
+    usedSpots.push(picked);
+    return picked;
+  }
 
   function showSpotBadge() {
     document.getElementById('currentTitle').textContent = 'Messaggio ARS EUROPA';
@@ -418,14 +438,17 @@
     }
   }
 
+  function playNextSpot() {
+    showSpotBadge();
+    player.loadVideoById({ videoId: randomSpotId() });
+  }
+
   function startSpotBreak(nextIdx) {
     playingSpot = true;
     spotsPlayed = 0;
     spotsTarget = Math.floor(Math.random() * SPOT_MAX) + 1;
     nextProgramIndex = nextIdx;
-    showSpotBadge();
-    player.loadPlaylist({ list: SPOT_PLAYLIST_ID, listType: 'playlist' });
-    player.setShuffle(true);
+    playNextSpot();
   }
 
   window.onYouTubeIframeAPIReady = function () {
@@ -441,7 +464,13 @@
       videoId: current.id,
       playerVars: { autoplay: 1, controls: 1, modestbranding: 1, rel: 0 },
       events: {
-        onReady: function (e) { e.target.playVideo(); },
+        onReady: function (e) {
+          const now = new Date();
+          const currentMin = parseTime(current.time);
+          const elapsedSeconds = (getNowMinutes() - currentMin) * 60 + now.getSeconds();
+          if (elapsedSeconds > 0) e.target.seekTo(elapsedSeconds, true);
+          e.target.playVideo();
+        },
         onStateChange: function (e) {
           if (e.data === YT.PlayerState.ENDED) {
             if (playingSpot) {
@@ -449,8 +478,7 @@
               if (spotsPlayed >= spotsTarget) {
                 loadNextProgram();
               } else {
-                showSpotBadge();
-                player.nextVideo();
+                playNextSpot();
               }
             } else {
               const nextIndex = loadedIndex + 1;
