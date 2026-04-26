@@ -201,13 +201,9 @@
     grid-template-columns: 68px 1fr;
     padding: 0.9rem 1.5rem;
     border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: background 0.12s;
     align-items: start;
     position: relative;
   }
-
-  .schedule-item:hover { background: var(--surface2); }
 
   .schedule-item.active {
     background: var(--surface2);
@@ -314,7 +310,7 @@
       <div class="day-date" id="dayDate"></div>
     </div>
     <div class="schedule-list" id="scheduleList"></div>
-    <div class="sidebar-footer">Clicca su un programma per avviarlo manualmente.</div>
+    <div class="sidebar-footer">La programmazione scorre automaticamente secondo il palinsesto.</div>
   </aside>
 </main>
 
@@ -340,9 +336,9 @@
     { time: "09:40", id: "dQw4w9WgXcQ", title: "Eidopoiesi e il linguaggio dell'AI", tag: "Semiotica" },
     { time: "10:00", id: "dQw4w9WgXcQ", title: "Fashion Semiology - Lezione aperta", tag: "Moda" },
     { time: "10:25", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 4: L'Angelo", tag: "Arte & Simboli" },
-    { time: "11:00", id: "JBxkizfcJno", title: "Andreuccio da Perugia", tag: "Decameron" },
-    { time: "11:35", id: "VauwHvkB68s", title: "Canto XXII Inferno", tag: "Divina Commedia" },
-    { time: "12:00", id: "WA0-DSA8TTI", title: "Capolavori - Matrimonio Mistico", tag: "Arte & Simboli" },
+    { time: "11:00", id: "dQw4w9WgXcQ", title: "Agostino. Della grazia e della volontà", tag: "Documentari" },
+    { time: "11:35", id: "dQw4w9WgXcQ", title: "Net Semiology - Principi fondamentali", tag: "Semiotica" },
+    { time: "12:00", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 5: La Mandorla", tag: "Arte & Simboli" },
     { time: "14:00", id: "dQw4w9WgXcQ", title: "Simnoesi. Sull'intelligenza condivisa", tag: "Teoria" },
     { time: "14:25", id: "dQw4w9WgXcQ", title: "Né Apocalittici né Integrati - Episodio 2", tag: "Serie" },
     { time: "14:50", id: "dQw4w9WgXcQ", title: "Simboli nell'Arte - Episodio 6: Il Mandala", tag: "Arte & Simboli" },
@@ -546,13 +542,7 @@
         </div>
       `;
 
-      div.addEventListener('click', () => {
-        loadedIndex = i;
-        player.loadVideoById({ videoId: item.id });
-        document.getElementById('currentTitle').textContent = item.title;
-        document.getElementById('currentTimeBadge').textContent = item.time + ' — ' + (item.tag || '');
-        renderSchedule(i);
-      });
+
 
       list.appendChild(div);
     });
