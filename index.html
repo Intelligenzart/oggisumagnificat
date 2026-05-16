@@ -392,7 +392,7 @@ const schedules = {
   { time: "22:21", id: "H9XFulxh-2Q", title: "Giotto - Maestà di Ognissanti - Uffizi", tag: "Arte & Simboli" },
   { time: "23:04", id: "EUKj2MyULiw", title: "Apocalisse: le ultime parole di Dio - Sacrum", tag: "Sacrum" },
 
-  { time: "23:54", id: "KqRAVCJqehE", title: "Fine trasmissioni", tag: "ARS EUROPA TV" },
+  
 ],
 
 1: [ // LUNEDÌ
@@ -468,7 +468,7 @@ const schedules = {
   { time: "22:44", id: "g6kgO00YunM", title: "Simbologia della Cena in Emmaus - Caravaggio", tag: "Arte & Simboli" },
   { time: "23:05", id: "55aKom1mDB0", title: "Il Guercino - L'angelo custode", tag: "Arte & Simboli" },
 
-  { time: "23:17", id: "KqRAVCJqehE", title: "Fine trasmissioni", tag: "ARS EUROPA TV" },
+  
 ],
 
 2: [ // MARTEDÌ
@@ -545,7 +545,7 @@ const schedules = {
   { time: "23:22", id: "T9m9cm0dhWY", title: "Decameron - Come attaccare la coda a una cavalla - IX giornata X novella", tag: "Decameron" },
   { time: "23:34", id: "05RV29HXOI8", title: "Significati nascosti nello Sposalizio della Vergine - Raffaello", tag: "Arte & Simboli" },
 
-  { time: "23:49", id: "KqRAVCJqehE", title: "Fine trasmissioni", tag: "ARS EUROPA TV" },
+ 
 ],
 
 3: [ // MERCOLEDÌ
@@ -626,7 +626,7 @@ const schedules = {
   { time: "22:15", id: "i4hB8HMOSW8", title: "Giovanni Bellini - Polittico di San Vincenzo Ferrer", tag: "Arte & Simboli" },
   { time: "22:33", id: "7ZRo9cVIazE", title: "Giotto - Storie di San Francesco - Parte 2 di 3", tag: "Arte & Simboli" },
 
-  { time: "22:52", id: "KqRAVCJqehE", title: "Fine trasmissioni", tag: "ARS EUROPA TV" },
+  
 ],
 
 4: [ // GIOVEDÌ
@@ -693,7 +693,7 @@ const schedules = {
   { time: "23:20", id: "e5UEQOsR85A", title: "Simbologia della Flagellazione di Cristo - Piero della Francesca", tag: "Arte & Simboli" },
   { time: "23:50", id: "CJIyeaOe1M8", title: "I simboli sacri nel Medioevo", tag: "Storia" },
 
-  { time: "23:59", id: "KqRAVCJqehE", title: "Fine trasmissioni", tag: "ARS EUROPA TV" },
+  
 ],
 
 5: [ // VENERDÌ
@@ -774,7 +774,7 @@ const schedules = {
   { time: "23:08", id: "4MbscGhd_yw", title: "Bartolomé Bermejo - Trittico della Vergine di Montserrat", tag: "Arte & Simboli" },
   { time: "23:25", id: "8RHc0dwAVmE", title: "Orfeo - Simboli, miti e leggende", tag: "Mitologia" },
 
-  { time: "23:42", id: "KqRAVCJqehE", title: "Fine trasmissioni", tag: "ARS EUROPA TV" },
+  
 ],
 
 6: [ // SABATO
@@ -860,7 +860,7 @@ const schedules = {
   { time: "23:38", id: "abUpEQBf1b0", title: "Mene, Tekel, Peres - la mano fantasma - Storie dalla Bibbia", tag: "Sacrum" },
   { time: "23:48", id: "_57OfZukJTs", title: "Decameron - Il Sultano Saladino e i tre anelli - I giornata III novella", tag: "Decameron" },
 
-  { time: "23:59", id: "KqRAVCJqehE", title: "Fine trasmissioni", tag: "ARS EUROPA TV" },
+  
 ],
 
 };
@@ -998,6 +998,11 @@ const schedule = schedules[today] || schedules[1];
               const nextIndex = loadedIndex + 1;
               if (nextIndex < schedule.length) {
                 startSpotBreak(nextIndex);
+               } else {
+  player.loadVideoById({ videoId: 'KqRAVCJqehE' });
+  document.getElementById('currentTitle').textContent = 'Fine trasmissioni';
+  document.getElementById('currentTimeBadge').textContent = '';
+}
               }
             }
           }
