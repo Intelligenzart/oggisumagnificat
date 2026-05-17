@@ -824,7 +824,13 @@ const schedule = schedules[today] || schedules[1];
             } else {
               const nextIndex = loadedIndex + 1;
               if (nextIndex < schedule.length) {
-                startSpotBreak(nextIndex);
+               startSpotBreak(nextIndex);
+              } else {
+                player.loadVideoById({ videoId: 'KqRAVCJqehE' });
+                document.getElementById('currentTitle').textContent = 'Fine trasmissioni';
+                document.getElementById('currentTimeBadge').textContent = '';
+              }
+            }
               }
             }
           }
