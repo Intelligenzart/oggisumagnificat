@@ -973,26 +973,24 @@ const schedule = schedules[today] || schedules[1];
           e.target.playVideo();
         },
        onStateChange: function (e) {
-  if (e.data === YT.PlayerState.ENDED) {
-    if (playingSpot) {
-      spotsPlayed++;
-      if (spotsPlayed >= spotsTarget) {
-        loadNextProgram();
-      } else {
-        playNextSpot();
+          if (e.data === YT.PlayerState.ENDED) {
+            if (playingSpot) {
+              spotsPlayed++;
+              if (spotsPlayed >= spotsTarget) {
+                loadNextProgram();
+              } else {
+                playNextSpot();
+              }
+            } else {
+              const nextIndex = loadedIndex + 1;
+              if (nextIndex < schedule.length) {
+                startSpotBreak(nextIndex);
+              }
+            }
+          }
+        }
       }
-    } else {
-      const nextIndex = loadedIndex + 1;
-      if (nextIndex < schedule.length) {
-        startSpotBreak(nextIndex);
-      } else {
-        player.loadVideoById({ videoId: 'KqRAVCJqehE' });
-        document.getElementById('currentTitle').textContent = 'Fine trasmissioni';
-        document.getElementById('currentTimeBadge').textContent = '';
-      }
-    }
-  }
-},
+    });
 
   function updateMeta() {
     const { current, next } = getCurrentItem();
