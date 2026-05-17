@@ -972,17 +972,7 @@ const schedule = schedules[today] || schedules[1];
           if (elapsedSeconds > 0) e.target.seekTo(elapsedSeconds, true);
           e.target.playVideo();
         },
-        onStateChange: function (e) {
-          if (e.data === YT.PlayerState.ENDED) {
-            if (playingSpot) {
-              spotsPlayed++;
-              if (spotsPlayed >= spotsTarget) {
-                loadNextProgram();
-              } else {
-                playNextSpot();
-              }
-            } else {
-         onStateChange: function (e) {
+       onStateChange: function (e) {
   if (e.data === YT.PlayerState.ENDED) {
     if (playingSpot) {
       spotsPlayed++;
@@ -1002,11 +992,7 @@ const schedule = schedules[today] || schedules[1];
       }
     }
   }
-}
-
-    updateMeta();
-    renderSchedule(current.index);
-  };
+},
 
   function updateMeta() {
     const { current, next } = getCurrentItem();
