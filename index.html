@@ -1028,6 +1028,22 @@ const schedule = schedules[today] || schedules[1];
       renderSchedule(idx);
     }
   }
+ function toggleFullscreen() {
+  const btn = document.getElementById('btnFullscreen');
+  if (!document.fullscreenElement) {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    btn.textContent = '✕';
+    btn.title = 'Esci da schermo intero';
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    btn.textContent = '⛶';
+    btn.title = 'Schermo intero';
+  }
+}
 
   function playNextSpot() {
     showSpotBadge();
