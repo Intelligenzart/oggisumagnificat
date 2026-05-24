@@ -1129,6 +1129,16 @@ const schedule = schedules[today] || schedules[1];
       list.appendChild(div);
     });
 
+   window.addEventListener('load', function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('tv') === '1') {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+  }
+});
+
     if (list.querySelector('.active')) {
       list.querySelector('.active').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
